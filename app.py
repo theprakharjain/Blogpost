@@ -6,6 +6,8 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///posts.db"
 db = SQLAlchemy(app)
 
+# Database Model
+
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(100), nullable = False)
@@ -16,11 +18,13 @@ class BlogPost(db.Model):
     def __repr__(self):
         return "Blog Post " + str(self.id)
 
+# Handling Index Route
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+# Handling Posts Route
 
 @app.route("/posts", methods = ["GET", "POST"])
 def posts():
@@ -36,6 +40,8 @@ def posts():
         all_posts = BlogPost.query.order_by(BlogPost.date_posted).all()
         return render_template("posts.html", var_posts=all_posts)
 
+# Handling New Posts Route
+
 @app.route("/posts/new", methods = ["GET", "POST"])
 def new_post():
     if request.method == "POST":
@@ -49,6 +55,7 @@ def new_post():
     else:
         return render_template("new_post.html")
     
+# Handling Delete Route
 
 @app.route("/posts/delete/<int:id>", methods = ["GET", "POST"])
 def delete(id):
@@ -56,6 +63,8 @@ def delete(id):
     db.session.delete(post)
     db.session.commit()
     return redirect("/posts")
+
+# Handling Post Delete Route
 
 @app.route("/posts/edit/<int:id>", methods = ["GET", "POST"])
 def edit(id):
